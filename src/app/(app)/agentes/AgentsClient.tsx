@@ -297,6 +297,9 @@ export function AgentsClient({ projects }: { projects: ProjectRef[] }) {
    Como conectar
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/** O formato exato que o campo de cabeçalho espera. O espaço depois de Bearer é obrigatório. */
+const VALOR_DO_CABECALHO = 'Bearer SEU_TOKEN_AQUI'
+
 function ConnectionCard({ hasTokens }: { hasTokens: boolean }) {
   const [url, setUrl] = useState('')
 
@@ -306,21 +309,6 @@ function ConnectionCard({ hasTokens }: { hasTokens: boolean }) {
 
   const base = url || 'https://SEU-DOMINIO/api/mcp'
 
-  const config = JSON.stringify(
-    {
-      mcpServers: {
-        superbase: {
-          type: 'http',
-          url: base,
-          headers: { Authorization: 'Bearer SEU_TOKEN_AQUI' },
-        },
-      },
-    },
-    null,
-    2,
-  )
-
-  const cli = `claude mcp add --transport http superbase ${base} --header "Authorization: Bearer SEU_TOKEN_AQUI"`
 
   return (
     <Card className="overflow-hidden">
@@ -341,28 +329,56 @@ function ConnectionCard({ hasTokens }: { hasTokens: boolean }) {
           </div>
         </div>
 
-        <div>
-          <p className="label mb-2">Configuração (Claude Desktop, n8n e afins)</p>
-          <div className="relative">
-            <pre className="overflow-x-auto rounded-md border border-[var(--line)] bg-[var(--void)] px-3 py-2.5 font-mono text-[11px] leading-relaxed text-[var(--ink-2)]">
-              {config}
-            </pre>
-            <div className="absolute right-2 top-2">
-              <CopyButton value={config} />
-            </div>
-          </div>
-        </div>
+        {/*
+          O passo a passo do conector personalizado do claude.ai.
 
+          A ordem aqui e a ordem da tela do Claude, para a pessoa conferir
+          campo por campo sem traduzir nada. O passo do cabecalho vem com o
+          valor pronto para copiar porque o erro mais comum e colar o token
+          sem o "Bearer " na frente: o servidor casa contra /^Bearer\s+(.+)$/i
+          e devolve 401, e o painel do Claude nunca reexibe o valor guardado,
+          entao nao ha como conferir depois.
+        */}
         <div>
-          <p className="label mb-2">Claude Code, numa linha</p>
-          <div className="relative">
+          <p className="label mb-2">Conectar no Claude</p>
+
+          <ol className="space-y-2 text-[12px] leading-relaxed text-[var(--ink-3)]">
+            <li>
+              <strong className="text-[var(--ink-2)]">1.</strong> No Claude, abra{' '}
+              <strong className="text-[var(--ink-2)]">Personalizar</strong>, aba{' '}
+              <strong className="text-[var(--ink-2)]">Conectores</strong>, botão{' '}
+              <strong className="text-[var(--ink-2)]">Adicionar</strong>, depois{' '}
+              <strong className="text-[var(--ink-2)]">Adicionar conector personalizado</strong>.
+            </li>
+            <li>
+              <strong className="text-[var(--ink-2)]">2.</strong> Dê um nome e cole o endereço
+              acima no campo de URL. Clique em <strong className="text-[var(--ink-2)]">Continuar</strong>.
+            </li>
+            <li>
+              <strong className="text-[var(--ink-2)]">3.</strong> Em Autenticação, deixe{' '}
+              <strong className="text-[var(--ink-2)]">Nenhum</strong>, que já vem marcado. Este
+              servidor não usa OAuth, ele espera a chave num cabeçalho.
+            </li>
+            <li>
+              <strong className="text-[var(--ink-2)]">4.</strong> Em Cabeçalhos de requisição,
+              use <code className="font-mono text-[11px] text-[var(--signal)]">Authorization</code>{' '}
+              como nome e cole o valor abaixo, trocando pelo seu token.
+            </li>
+          </ol>
+
+          <div className="relative mt-3">
             <pre className="overflow-x-auto rounded-md border border-[var(--line)] bg-[var(--void)] px-3 py-2.5 font-mono text-[11px] leading-relaxed text-[var(--ink-2)]">
-              {cli}
+              {VALOR_DO_CABECALHO}
             </pre>
             <div className="absolute right-2 top-2">
-              <CopyButton value={cli} />
+              <CopyButton value={VALOR_DO_CABECALHO} />
             </div>
           </div>
+
+          <p className="mt-2 text-[11.5px] text-[var(--ink-4)]">
+            O valor precisa começar com <strong>Bearer</strong> e um espaço. Token colado sozinho
+            devolve 401, e o Claude não mostra o valor de novo para você conferir.
+          </p>
         </div>
 
         <div>
