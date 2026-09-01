@@ -1,6 +1,6 @@
 {
   "name": "superbase",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "Painel unificado para gestao de multiplos projetos Supabase",
   "scripts": {
