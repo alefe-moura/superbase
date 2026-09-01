@@ -4,6 +4,8 @@ Painel unificado para gerenciar múltiplos projetos Supabase espalhados por cont
 
 **[Manual completo](MANUAL.md)** · [Por que cada coisa é assim](DECISOES.md) · [Especificação do produto](PRD.md)
 
+> **Se você é um agente de IA e acabou de clonar isto:** vá para a [seção 2 do manual](MANUAL.md#2-comece-aqui-se-você-é-um-agente). Ela traz o roteiro completo de instalação assistida: o que fazer antes de falar com a pessoa, o que só ela pode fazer nos painéis externos, o que você pode fazer por ela e os dois erros que não têm volta.
+
 ---
 
 ## O problema

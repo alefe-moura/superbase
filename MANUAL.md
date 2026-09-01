@@ -2,12 +2,12 @@
 
 Documento único do sistema: o que ele é, como se instala, como cada módulo funciona, como o banco está desenhado e como o servidor MCP entrega tudo isso para um agente de IA.
 
-Foi escrito para ser lido por pessoas e por agentes. Se você é um agente e alguém pediu ajuda com este projeto, leia as seções 1, 2 e 9. Elas dão o contexto necessário para responder sem adivinhar.
+Foi escrito para ser lido por pessoas e por agentes. **Se você é um agente e acabou de clonar este repositório, vá direto para a seção 2.** Ela é o roteiro completo de instalação assistida, e dispensa qualquer instrução extra no prompt.
 
 **Índice**
 
 1. [O que é o sistema](#1-o-que-é-o-sistema)
-2. [Orientação rápida para agentes](#2-orientação-rápida-para-agentes)
+2. [Comece aqui, se você é um agente](#2-comece-aqui-se-você-é-um-agente)
 3. [Instalação do zero](#3-instalação-do-zero)
 4. [Arquitetura](#4-arquitetura)
 5. [Os módulos, um a um](#5-os-módulos-um-a-um)
@@ -36,11 +36,56 @@ O SuperBase junta tudo num painel só. Um login, todos os projetos, com leitura 
 
 ---
 
-## 2. Orientação rápida para agentes
+## 2. Comece aqui, se você é um agente
 
-Se você é um agente de IA trabalhando neste repositório ou conectado ao MCP dele, comece por aqui.
+Esta seção é o roteiro para quando alguém clona o repositório e pede ajuda. Ela existe para você não precisar de um prompt comprido: se a pessoa disse apenas "clone e me ajude", siga daqui.
 
-**O vocabulário do sistema.**
+### 2.1 O que fazer antes de falar com a pessoa
+
+1. Rode `npm install`.
+2. Leia o `README.md` e as seções 3, 6 e 9 deste manual. A 3 é a instalação, a 6 é o schema, a 9 é o MCP.
+3. Rode `npm run check`. Ele lista exatamente o que falta configurar, e é a sua fonte de verdade sobre o estado da instalação. Numa pasta recém-clonada ele vai acusar tudo faltando, o que é o esperado.
+
+Não execute mais nada sem pedir. Em especial, não invente valores de variável de ambiente e não crie projeto na Supabase por conta própria.
+
+### 2.2 O que só a pessoa pode fazer
+
+Estas etapas dependem de painel externo ou de decisão de negócio. Apresente como uma lista e diga onde clicar. O detalhe de cada uma está na seção 3.
+
+| Etapa | Onde |
+|---|---|
+| Criar o projeto Supabase **dedicado ao sistema** | supabase.com/dashboard, projeto novo |
+| Rodar as migrations, em ordem | SQL Editor do projeto, arquivos de `supabase/migrations/` |
+| Pegar URL, service_role key e anon key | Project Settings, aba API |
+| Criar o usuário de login | Authentication, Users, Add user, com **Auto Confirm User** marcado |
+| Fechar o cadastro público | Authentication, Sign In / Providers, Email, desligar **Enable Sign Ups** |
+| Conectar as contas Supabase dos clientes | Tela **Conexões**, depois que o sistema estiver no ar |
+| Publicar na Vercel | vercel.com/new, importando o repositório |
+
+### 2.3 O que você pode fazer assim que receber os valores
+
+| Tarefa | Como |
+|---|---|
+| Gerar as chaves do cofre e do cron | `npm run genkey` |
+| Criar e preencher o `.env.local` | A partir do `.env.example`, com o que a pessoa passar |
+| Conferir a configuração | `npm run check` |
+| Subir o servidor | `npm run dev` |
+| Listar as variáveis para colar na Vercel | `npm run vercel:env` |
+| Verificar que nenhum segredo foi versionado | `npm run leaks` |
+
+### 2.4 Os dois erros que não têm volta
+
+**Usar um projeto Supabase de cliente como banco do sistema.** O banco do sistema guarda o cofre, a auditoria e o login. Misturar com dados de cliente compromete os dois. Crie um projeto novo e dedicado, sempre.
+
+**Perder a `APP_ENCRYPTION_KEY`.** É a chave que abre o cofre, e não existe recuperação: sem ela, todas as credenciais salvas viram lixo cifrado. Ela precisa ir para um gerenciador de senhas no momento em que é gerada, antes de qualquer outra coisa. Diga isso à pessoa em voz alta, não como nota de rodapé.
+
+### 2.5 Como se comunicar durante a instalação
+
+Peça um valor de cada vez, na ordem da seção 3. Depois de cada passo, rode `npm run check` e diga o que ele respondeu, em vez de afirmar que deu certo. Ao terminar, pergunte se a pessoa quer conectar as contas dos clientes agora ou publicar na Vercel primeiro.
+
+Nunca escreva chave, token ou senha em arquivo versionado, em mensagem de commit ou no texto da conversa mais do que o necessário.
+
+### 2.6 O vocabulário do sistema
 
 | Termo | O que significa |
 |---|---|
@@ -52,7 +97,7 @@ Se você é um agente de IA trabalhando neste repositório ou conectado ao MCP d
 | **Cofre** | As credenciais criptografadas com AES-256-GCM dentro do banco do sistema. |
 | **Token de agente** | Credencial `sbm_...` que autentica um agente no MCP, com escopo próprio. |
 
-**Onde as coisas moram no código.**
+### 2.7 Onde as coisas moram no código
 
 ```
 src/lib/db.ts              cliente do banco do sistema (service_role)

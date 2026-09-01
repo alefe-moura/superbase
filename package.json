@@ -1,6 +1,6 @@
 {
   "name": "superbase",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "private": true,
   "license": "MIT",
   "description": "Painel unificado para gestao de multiplos projetos Supabase",
