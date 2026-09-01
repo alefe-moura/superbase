@@ -129,4 +129,6 @@ scripts/                genkey, check-db, selftest, check-leaks
 
 ## Licença
 
-Uso livre. Se este código lhe for útil, fique à vontade para adaptá-lo ao seu fluxo.
+[MIT](LICENSE). Uso livre, inclusive comercial: pode copiar, modificar, usar em trabalho de cliente e redistribuir. A única exigência é manter o aviso de copyright junto. O software vem sem garantia.
+
+O arquivo [LICENSE](LICENSE) está em inglês porque é o texto oficial da MIT, e traduzir invalidaria o reconhecimento automático dela pelo GitHub e pelas ferramentas de auditoria de dependências.
