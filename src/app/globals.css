@@ -1,0 +1,387 @@
+@import 'tailwindcss';
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SuperBase Manager, sistema visual "painel de instrumentos"
+
+   Conceito: isto não é um SaaS, é um instrumento. A pessoa abre esta tela
+   quando um cliente diz "parou de funcionar". Precisa ler o estado de oito
+   bancos de produção em dois segundos e agir sem errar de projeto.
+
+   Daí as escolhas: fundo quase preto com fundo de esmeralda, dados sempre em
+   monoespaçada com algarismos tabulares (números alinham entre linhas), e o
+   mint da marca reservado para UMA coisa só, sinal de vida. Nada mais no
+   sistema usa mint, então quando ele aparece, significa algo.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* Bricolage Grotesque carrega a marca: logo, menus, títulos e números
+     grandes. Instrument Sans fica no texto corrido, JetBrains Mono nos dados. */
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-jet), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Marca, rampa entre os dois tons oficiais: #5FE6D4 e #008F88 */
+  --color-brand-100: #d9faf5;
+  --color-brand-200: #aaf2e9;
+  --color-brand-300: #7feade;
+  --color-brand-400: #5fe6d4;
+  --color-brand-500: #3ccfc1;
+  --color-brand-600: #1fb0a6;
+  --color-brand-700: #008f88;
+  --color-brand-800: #006b66;
+  --color-brand-900: #043a37;
+}
+
+:root {
+  /* ── Superfícies ─────────────────────────────────────────────────────── */
+  /* Não é preto puro: tem esmeralda no fundo, para a marca pertencer à tela */
+  --void: #050b0b;
+  --bg: #070f0f;
+  --surface: #0b1615;
+  --surface-2: #0f1d1c;
+  --surface-3: #142523;
+
+  /* ── Linhas ──────────────────────────────────────────────────────────── */
+  --line: #172b29;
+  --line-strong: #21403c;
+  --line-glow: #2f5f58;
+
+  /* ── Texto ───────────────────────────────────────────────────────────── */
+  --ink: #e8f4f2;
+  --ink-2: #8fa8a4;
+  --ink-3: #5a706d;
+  --ink-4: #3d4f4d;
+
+  /* ── Sinal (mint da marca = vida) ───────────────────────────────────── */
+  --signal: #5fe6d4;
+  --signal-bright: #7feade;
+  --signal-deep: #008f88;
+  --signal-ink: #04211f;
+
+  /* ── Estados ─────────────────────────────────────────────────────────── */
+  --warn: #f2b544;
+  --alert: #ff6b6b;
+  --info: #62b6ff;
+
+  --focus: color-mix(in srgb, var(--signal) 45%, transparent);
+}
+
+/* Tema claro, mantido para quem preferir, mas o escuro é o padrão e o
+   ambiente para o qual a identidade foi desenhada. */
+[data-theme='light'] {
+  --void: #eef3f2;
+  --bg: #f6faf9;
+  --surface: #ffffff;
+  --surface-2: #f1f6f5;
+  --surface-3: #e6efed;
+
+  --line: #dde8e6;
+  --line-strong: #c3d5d2;
+  --line-glow: #9dc4bf;
+
+  --ink: #0a1a18;
+  --ink-2: #45605c;
+  --ink-3: #6b8481;
+  --ink-4: #93a8a5;
+
+  /* No claro o mint puro não tem contraste suficiente sobre branco,
+     então o sinal passa a ser o tom escuro da marca. */
+  --signal: #008f88;
+  --signal-bright: #00a89f;
+  --signal-deep: #006b66;
+  --signal-ink: #ffffff;
+
+  --warn: #b06d00;
+  --alert: #d13b3b;
+  --info: #0d6ec4;
+}
+
+* {
+  border-color: var(--line);
+  min-width: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01', 'cv01';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.011em;
+}
+
+/* Números sempre alinhados em colunas, sem isso, comparar oito projetos
+   lado a lado vira exercício de paciência. */
+.tnum,
+table td,
+table th {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--signal-ink);
+}
+
+/* ─── Barras de rolagem: finas, presentes só quando necessárias ────────── */
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--line-glow);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Atmosfera, o que separa "tela escura" de ambiente
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  .surface {
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+
+  /* Grão sutil: quebra a chapada do fundo sem virar textura visível */
+  .grain::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.028;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Brilho de instrumento ligado, no canto superior esquerdo */
+  .aurora::after {
+    content: '';
+    position: fixed;
+    top: -18rem;
+    left: -12rem;
+    width: 48rem;
+    height: 36rem;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at center,
+      color-mix(in srgb, var(--signal) 13%, transparent) 0%,
+      transparent 68%
+    );
+    filter: blur(48px);
+  }
+
+  .hairline-grid {
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Rótulos técnicos: caixa alta, espaçados, monoespaçados */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* Títulos, menus e números grandes: Bricolage Grotesque, bem fechada */
+  .display {
+    font-family: var(--font-display);
+    letter-spacing: -0.028em;
+    font-weight: 600;
+  }
+
+  .display-tight {
+    font-family: var(--font-display);
+    letter-spacing: -0.045em;
+    font-weight: 700;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Movimento, concentrado na entrada da página e nos sinais vivos
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Pulso de telemetria, não é decoração: marca o que está vivo */
+@keyframes signal-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+}
+
+@keyframes halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Barra de tempo restante do aviso flutuante */
+@keyframes toast-countdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.rise {
+  animation: rise 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.fade-in {
+  animation: fade 0.3s ease-out both;
+}
+.scale-in {
+  animation: scale-in 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.spin {
+  animation: spin 0.85s linear infinite;
+}
+
+/* Revelação escalonada: a página se monta em cascata, não de uma vez */
+.stagger > * {
+  animation: rise 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.stagger > *:nth-child(1) {
+  animation-delay: 0.02s;
+}
+.stagger > *:nth-child(2) {
+  animation-delay: 0.07s;
+}
+.stagger > *:nth-child(3) {
+  animation-delay: 0.12s;
+}
+.stagger > *:nth-child(4) {
+  animation-delay: 0.17s;
+}
+.stagger > *:nth-child(5) {
+  animation-delay: 0.22s;
+}
+.stagger > *:nth-child(6) {
+  animation-delay: 0.27s;
+}
+.stagger > *:nth-child(7) {
+  animation-delay: 0.32s;
+}
+.stagger > *:nth-child(8) {
+  animation-delay: 0.37s;
+}
+.stagger > *:nth-child(n + 9) {
+  animation-delay: 0.4s;
+}
+
+/* Brilho que atravessa a barra durante um carregamento */
+.sweeping {
+  position: relative;
+  overflow: hidden;
+}
+.sweeping::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 33%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--signal) 28%, transparent),
+    transparent
+  );
+  animation: sweep 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

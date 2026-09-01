@@ -1,0 +1,54 @@
+{
+  "name": "superbase",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Painel unificado para gestao de multiplos projetos Supabase",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "genkey": "node scripts/genkey.mjs",
+    "selftest": "node scripts/selftest.mjs",
+    "check": "node scripts/check-db.mjs",
+    "e2e": "node scripts/e2e-auth.mjs",
+    "senha": "node scripts/set-password.mjs",
+    "probe": "node scripts/security-probe.mjs",
+    "leaks": "node scripts/check-leaks.mjs",
+    "smoke": "node scripts/smoke-pages.mjs",
+    "bench": "node scripts/bench-tables.mjs",
+    "test:cell": "node scripts/test-cell-edit.mjs",
+    "test:nosleep": "node scripts/test-no-sleep.mjs",
+    "vercel:env": "node scripts/vercel-env.mjs",
+    "test:restore": "node scripts/test-backup-restore.mjs",
+    "test:rows": "node scripts/test-row-restore.mjs",
+    "test:guard": "node scripts/test-guard.mjs",
+    "test:mcp": "node scripts/test-mcp.mjs",
+    "test:secrets": "node scripts/test-mcp-secrets.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.4",
+    "@supabase/supabase-js": "^2.58.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.469.0",
+    "next": "^15.5.22",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "recharts": "^2.15.0",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0"
+  },
+  "overrides": {
+    "postcss": "^8.5.25",
+    "sharp": "^0.35.3",
+    "nanoid": "^3.3.17"
+  }
+}
