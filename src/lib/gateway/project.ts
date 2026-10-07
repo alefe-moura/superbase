@@ -50,7 +50,8 @@ async function request<T>(
       headers: {
         apikey: serviceKey,
         Authorization: `Bearer ${serviceKey}`,
-        'Content-Type': 'application/json',
+        // Sem body, o Storage recusa o DELETE se vier Content-Type JSON.
+        ...(init.body != null ? { 'Content-Type': 'application/json' } : {}),
         ...(init.headers ?? {}),
       },
     })
